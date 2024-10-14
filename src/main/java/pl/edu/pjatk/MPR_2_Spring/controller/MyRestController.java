@@ -1,18 +1,19 @@
-package pl.edu.pjatk.MPR_2_Spring.controllers;
+package pl.edu.pjatk.MPR_2_Spring.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pjatk.MPR_2_Spring.model.Car;
-import pl.edu.pjatk.MPR_2_Spring.services.CarService;
+import pl.edu.pjatk.MPR_2_Spring.service.CarService;
 
 import java.util.List;
+import java.util.Optional;
 
 //Ta adnotacja będzie się komunikowała z siecią (Wystawiamy ją na sieć)
 //Dostajemy żądanie HTTP od klienta i kontroler je odbiera. Kontroler jedynie odsyła logikę do dalszych komponentów.
 
 @RestController
 public class MyRestController {
-    private CarService carService;
+    private final CarService carService;
 
     @Autowired   //Autowired - dzięki niemu spring tworzy automatycznie nowy obiekt, kiedy go potrzebuje
     public MyRestController(CarService carService) {
@@ -30,13 +31,25 @@ public class MyRestController {
 
     //GET
     @GetMapping("cars/all")
-    public List<Car> getAll() {
+    public Iterable<Car> getAll() {
         return carService.getCarsList();
+    }
+
+    @GetMapping("cars/make/{make}")
+    public List<Car> getAllByMake(@PathVariable String make) {
+        //podnosimy pierwsza litere
+        return this.carService.getCarsByMake(make.substring(0,1).toUpperCase() + make.substring(1));
+    }
+
+    @GetMapping("cars/color/{color}")
+    public List<Car> getAllByColor(@PathVariable String color) {
+        //podnosimy pierwsza litere
+        return this.carService.getCarsByColor(color.substring(0,1).toUpperCase() + color.substring(1));
     }
 
     //GET
     @GetMapping("cars/{id}")
-    public Car get(@PathVariable Integer id) {
+    public Optional<Car> get(@PathVariable Integer id) {
         return this.carService.getCar(id);
     }
 
@@ -47,12 +60,12 @@ public class MyRestController {
     }
 
     @DeleteMapping("cars/{id}")
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable long id) {
         carService.delete(id);
     }
 
-    @PutMapping("cars/{id}")
-    public void update(@PathVariable int id, @RequestBody Car car) {
+    @PatchMapping("cars/{id}")
+    public void update(@PathVariable long id, @RequestBody Car car) {
         carService.update(id, car);
     }
 }
