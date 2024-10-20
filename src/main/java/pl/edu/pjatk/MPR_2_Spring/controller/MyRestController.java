@@ -64,7 +64,7 @@ public class MyRestController {
         carService.delete(id);
     }
 
-    @PatchMapping("cars/{id}")
+    @PutMapping("cars/{id}")
     public void update(@PathVariable long id, @RequestBody Car car) {
         carService.update(id, car);
     }

@@ -45,8 +45,12 @@ public class CarService {
     }
 
     public void update(long id, Car newCar) {
-        if(repository.findById(id).isPresent()){
-            repository.save(newCar);
+        Optional<Car> existingCarOptional = repository.findById(id);
+        if (existingCarOptional.isPresent()) {
+            Car existingCar = existingCarOptional.get();
+            existingCar.setColor(newCar.getColor());
+            existingCar.setMake(newCar.getMake());   
+            repository.save(existingCar);
         }
     }
 }
