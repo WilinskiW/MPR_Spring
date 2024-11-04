@@ -12,15 +12,22 @@ import java.util.Optional;
 @Service
 public class CarService {
     private final CarRepository repository;
+    private final StringUtilsService stringUtilsService;
 
-    public CarService(CarRepository repository) {
+    public CarService(CarRepository repository, StringUtilsService stringUtilsService) {
         this.repository = repository;
+        this.stringUtilsService = stringUtilsService;
+        initializeCars();
+    }
+
+    private void initializeCars(){
         add(new Car("Ford", "Blue"));
         add(new Car("Ferrari", "Red"));
         add(new Car("Fiat", "White"));
     }
 
     public void add(Car car) {
+        stringUtilsService.goToUpperCase(car);
         repository.save(car);
     }
 
@@ -29,19 +36,29 @@ public class CarService {
     }
 
     public Iterable<Car> getCarsList() {
-        return repository.findAll();
+        Iterable<Car> cars = repository.findAll();
+        cars.forEach(car -> stringUtilsService.goToLowerCaseExceptFirstLetter(car));
+        return cars;
     }
 
     public List<Car> getCarsByMake(String make) {
-        return repository.findByMake(make);
+        List<Car> cars = repository.findByMake(make);
+        cars.forEach(car -> stringUtilsService.goToLowerCaseExceptFirstLetter(car));
+        return cars;
     }
 
     public List<Car> getCarsByColor(String color) {
-        return repository.findByColor(color);
+        List<Car> cars = repository.findByColor(color);
+        cars.forEach(car -> stringUtilsService.goToLowerCaseExceptFirstLetter(car));
+        return cars;
     }
 
     public Optional<Car> getCar(long id) {
-        return repository.findById(id);
+        Optional<Car> car = repository.findById(id);
+        if (car.isPresent()) {
+            stringUtilsService.goToLowerCaseExceptFirstLetter(car.get());
+        }
+        return car;
     }
 
     public void update(long id, Car newCar) {
@@ -49,7 +66,7 @@ public class CarService {
         if (existingCarOptional.isPresent()) {
             Car existingCar = existingCarOptional.get();
             existingCar.setColor(newCar.getColor());
-            existingCar.setMake(newCar.getMake());   
+            existingCar.setMake(newCar.getMake());
             repository.save(existingCar);
         }
     }
