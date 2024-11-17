@@ -18,10 +18,14 @@ public class Car {
     public Car(String make, String color) {
         this.make = make;
         this.color = color;
-        this.identification = make.hashCode() + color.hashCode();
+        generateHashCode();
     }
 
     public Car() {}
+
+    private void generateHashCode(){
+        this.identification = make.hashCode() + color.hashCode();
+    }
 
     public long getId() {
         return id;
@@ -37,6 +41,7 @@ public class Car {
 
     public void setColor(String color) {
         this.color = color;
+        generateHashCode();
     }
 
     public String getMake() {
@@ -45,6 +50,7 @@ public class Car {
 
     public void setMake(String make) {
         this.make = make;
+        generateHashCode();
     }
 
     public long getIdentification() {

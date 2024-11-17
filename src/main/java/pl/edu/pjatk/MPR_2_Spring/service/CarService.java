@@ -1,8 +1,11 @@
 package pl.edu.pjatk.MPR_2_Spring.service;
 
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Service;
 import pl.edu.pjatk.MPR_2_Spring.exception.CarAlreadyExistException;
 import pl.edu.pjatk.MPR_2_Spring.exception.CarNotFoundException;
+import pl.edu.pjatk.MPR_2_Spring.exception.CarsNotFoundException;
+import pl.edu.pjatk.MPR_2_Spring.exception.WrongFormatException;
 import pl.edu.pjatk.MPR_2_Spring.model.Car;
 import pl.edu.pjatk.MPR_2_Spring.repository.CarRepository;
 
@@ -29,8 +32,12 @@ public class CarService {
     }
 
     public void add(Car car) {
-        if (isExistCarWithIdentification(car.getIdentification())) {
+        if (repository.existsCarByIdentification(car.getIdentification())) {
             throw new CarAlreadyExistException();
+        }
+
+        if(isEmptyString(car)){
+            throw new WrongFormatException();
         }
 
         stringUtilsService.goToUpperCase(car);
@@ -44,30 +51,42 @@ public class CarService {
         repository.deleteById(id);
     }
 
-    private boolean isExistCarWithIdentification(long identification) {
-        return !repository.findByIdentification(identification).isEmpty();
-    }
+    public List<Car> getCarsList() {
+        List<Car> cars = (List<Car>) repository.findAll();
 
-    public Iterable<Car> getCarsList() {
-        Iterable<Car> cars = repository.findAll();
-        cars.forEach(car -> stringUtilsService.goToLowerCaseExceptFirstLetter(car));
+        if (cars.isEmpty()) {
+            throw new CarsNotFoundException();
+        }
+
+        cars.forEach(stringUtilsService::goToLowerCaseExceptFirstLetter);
         return cars;
     }
 
     public List<Car> getCarsByMake(String make) {
         List<Car> cars = repository.findByMake(make);
-        cars.forEach(car -> stringUtilsService.goToLowerCaseExceptFirstLetter(car));
+
+        if (cars.isEmpty()) {
+            throw new CarsNotFoundException();
+        }
+
+        cars.forEach(stringUtilsService::goToLowerCaseExceptFirstLetter);
         return cars;
     }
 
     public List<Car> getCarsByColor(String color) {
         List<Car> cars = repository.findByColor(color);
-        cars.forEach(car -> stringUtilsService.goToLowerCaseExceptFirstLetter(car));
+
+        if (cars.isEmpty()) {
+            throw new CarsNotFoundException();
+        }
+
+        cars.forEach(stringUtilsService::goToLowerCaseExceptFirstLetter);
         return cars;
     }
 
     public Car getCar(long id) {
         Optional<Car> car = repository.findById(id);
+
         if (car.isEmpty()) {
             throw new CarNotFoundException();
         }
@@ -80,16 +99,20 @@ public class CarService {
     public void update(long id, Car newCar) {
         Optional<Car> existingCarOptional = repository.findById(id);
         if (existingCarOptional.isPresent()) {
-            Car existingCar = existingCarOptional.get();
-            existingCar.setColor(newCar.getColor());
-            existingCar.setMake(newCar.getMake());
-
-            if (sameNameSameColor(existingCar, newCar) || isEmptyString(existingCar, newCar)) {
-                throw new CarAlreadyExistException();
-            }
-
-            repository.save(existingCar);
+            verifyUpdate(existingCarOptional.get(), newCar);
+            repository.save(existingCarOptional.get());
+        } else {
+            throw new CarNotFoundException();
         }
+    }
+
+    private void verifyUpdate(Car existingCar, Car newCar) {
+        if (sameNameSameColor(existingCar, newCar) || isEmptyString(newCar)) {
+            throw new WrongFormatException();
+        }
+
+        existingCar.setColor(newCar.getColor());
+        existingCar.setMake(newCar.getMake());
     }
 
     private boolean sameNameSameColor(Car c1, Car c2) {
@@ -97,7 +120,9 @@ public class CarService {
                 c1.getMake().equals(c2.getMake());
     }
 
-    private boolean isEmptyString(Car c1, Car c2) {
-        return c1.getMake().isEmpty() && c2.getMake().isEmpty() && c1.getColor().isEmpty() && c2.getColor().isEmpty();
+    private boolean isEmptyString(Car newCar) {
+        String make = newCar.getMake().trim();
+        String color = newCar.getColor().trim();
+        return make.isEmpty() || color.isEmpty();
     }
 }

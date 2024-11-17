@@ -14,6 +14,11 @@ public class CarExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {CarsNotFoundException.class})
+    protected ResponseEntity<Object> handleCarsNotFoundException(CarNotFoundException ex, WebRequest request) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(value = {CarAlreadyExistException.class})
     protected ResponseEntity<Object> handleCarAlreadyExist(CarAlreadyExistException ex, WebRequest request) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.ALREADY_REPORTED);
