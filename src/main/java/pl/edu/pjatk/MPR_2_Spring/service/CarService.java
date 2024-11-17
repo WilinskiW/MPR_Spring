@@ -1,6 +1,8 @@
 package pl.edu.pjatk.MPR_2_Spring.service;
 
 import org.springframework.stereotype.Service;
+import pl.edu.pjatk.MPR_2_Spring.exception.CarAlreadyExistException;
+import pl.edu.pjatk.MPR_2_Spring.exception.CarNotFoundException;
 import pl.edu.pjatk.MPR_2_Spring.model.Car;
 import pl.edu.pjatk.MPR_2_Spring.repository.CarRepository;
 
@@ -20,19 +22,30 @@ public class CarService {
         initializeCars();
     }
 
-    private void initializeCars(){
+    private void initializeCars() {
         add(new Car("Ford", "Blue"));
         add(new Car("Ferrari", "Red"));
         add(new Car("Fiat", "White"));
     }
 
     public void add(Car car) {
+        if (isExistCarWithIdentification(car.getIdentification())) {
+            throw new CarAlreadyExistException();
+        }
+
         stringUtilsService.goToUpperCase(car);
         repository.save(car);
     }
 
     public void delete(long id) {
+        if (!repository.existsById(id)) {
+            throw new CarNotFoundException();
+        }
         repository.deleteById(id);
+    }
+
+    private boolean isExistCarWithIdentification(long identification) {
+        return !repository.findByIdentification(identification).isEmpty();
     }
 
     public Iterable<Car> getCarsList() {
@@ -53,12 +66,15 @@ public class CarService {
         return cars;
     }
 
-    public Optional<Car> getCar(long id) {
+    public Car getCar(long id) {
         Optional<Car> car = repository.findById(id);
-        if (car.isPresent()) {
-            stringUtilsService.goToLowerCaseExceptFirstLetter(car.get());
+        if (car.isEmpty()) {
+            throw new CarNotFoundException();
         }
-        return car;
+
+        stringUtilsService.goToLowerCaseExceptFirstLetter(car.get());
+
+        return car.get();
     }
 
     public void update(long id, Car newCar) {
@@ -67,7 +83,21 @@ public class CarService {
             Car existingCar = existingCarOptional.get();
             existingCar.setColor(newCar.getColor());
             existingCar.setMake(newCar.getMake());
+
+            if (sameNameSameColor(existingCar, newCar) || isEmptyString(existingCar, newCar)) {
+                throw new CarAlreadyExistException();
+            }
+
             repository.save(existingCar);
         }
+    }
+
+    private boolean sameNameSameColor(Car c1, Car c2) {
+        return c1.getColor().equals(c2.getColor()) &&
+                c1.getMake().equals(c2.getMake());
+    }
+
+    private boolean isEmptyString(Car c1, Car c2) {
+        return c1.getMake().isEmpty() && c2.getMake().isEmpty() && c1.getColor().isEmpty() && c2.getColor().isEmpty();
     }
 }

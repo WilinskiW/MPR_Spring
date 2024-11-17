@@ -46,4 +46,8 @@ public class Car {
     public void setMake(String make) {
         this.make = make;
     }
+
+    public long getIdentification() {
+        return identification;
+    }
 }

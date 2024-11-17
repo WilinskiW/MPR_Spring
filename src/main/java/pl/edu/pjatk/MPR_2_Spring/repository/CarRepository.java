@@ -10,4 +10,5 @@ import java.util.List;
 public interface CarRepository extends CrudRepository<Car, Long> {
     List<Car> findByMake(String make);
     List<Car> findByColor(String color);
+    List<Car> findByIdentification(long identification);
 }
