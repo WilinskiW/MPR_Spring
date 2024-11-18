@@ -21,10 +21,13 @@ public class Car {
         generateHashCode();
     }
 
-    public Car() {}
+    public Car() {
+    }
 
-    private void generateHashCode(){
-        this.identification = make.hashCode() + color.hashCode();
+    private void generateHashCode() {
+        if (make != null && color != null) {
+            this.identification = make.hashCode() + color.hashCode();
+        }
     }
 
     public long getId() {

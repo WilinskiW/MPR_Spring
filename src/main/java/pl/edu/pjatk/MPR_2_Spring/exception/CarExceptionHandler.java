@@ -15,7 +15,7 @@ public class CarExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {CarsNotFoundException.class})
-    protected ResponseEntity<Object> handleCarsNotFoundException(CarNotFoundException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleCarsNotFoundException(CarsNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

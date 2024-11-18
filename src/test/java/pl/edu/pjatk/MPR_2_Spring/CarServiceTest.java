@@ -88,8 +88,8 @@ public class CarServiceTest {
 
     @Test
     public void getCarsByMakeWithResultTest() {
-        when(this.carRepository.findByMake("Renault")).thenReturn(List.of(new Car("Renault", "White"),
-                new Car("Renault", "Blue")));
+        when(this.carRepository.findByMake("RENAULT")).thenReturn(List.of(new Car("RENAULT", "WHITE"),
+                new Car("RENAULT", "BLUE")));
         carService.getCarsByMake("Renault");
         verify(stringUtilsService, times(2)).goToLowerCaseExceptFirstLetter(any());
         verify(stringUtilsService, times(0)).goToUpperCase(any());
@@ -103,8 +103,8 @@ public class CarServiceTest {
 
     @Test
     public void getCarsListByColorWithResultTest() {
-        when(this.carRepository.findByColor("Blue"))
-                .thenReturn(List.of(new Car("Renault", "Blue"), new Car("Ferrari", "Blue")));
+        when(this.carRepository.findByColor("BLUE"))
+                .thenReturn(List.of(new Car("RENAULT", "BLUE"), new Car("FERRARI", "BLUE")));
         carService.getCarsByColor("Blue");
         verify(stringUtilsService, times(2)).goToLowerCaseExceptFirstLetter(any());
         verify(stringUtilsService, times(0)).goToUpperCase(any());

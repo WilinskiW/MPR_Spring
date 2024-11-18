@@ -63,7 +63,7 @@ public class CarService {
     }
 
     public List<Car> getCarsByMake(String make) {
-        List<Car> cars = repository.findByMake(make);
+        List<Car> cars = repository.findByMake(make.toUpperCase());
 
         if (cars.isEmpty()) {
             throw new CarsNotFoundException();
@@ -74,7 +74,7 @@ public class CarService {
     }
 
     public List<Car> getCarsByColor(String color) {
-        List<Car> cars = repository.findByColor(color);
+        List<Car> cars = repository.findByColor(color.toUpperCase());
 
         if (cars.isEmpty()) {
             throw new CarsNotFoundException();
