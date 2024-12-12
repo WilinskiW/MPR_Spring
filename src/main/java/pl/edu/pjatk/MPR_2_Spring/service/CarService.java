@@ -1,6 +1,6 @@
 package pl.edu.pjatk.MPR_2_Spring.service;
 
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+
 import org.springframework.stereotype.Service;
 import pl.edu.pjatk.MPR_2_Spring.exception.CarAlreadyExistException;
 import pl.edu.pjatk.MPR_2_Spring.exception.CarNotFoundException;
@@ -9,7 +9,9 @@ import pl.edu.pjatk.MPR_2_Spring.exception.WrongFormatException;
 import pl.edu.pjatk.MPR_2_Spring.model.Car;
 import pl.edu.pjatk.MPR_2_Spring.repository.CarRepository;
 
+
 import java.util.List;
+
 import java.util.Optional;
 
 //Pakiet "services" - dodajemy do niego wszelkie komponenty, które coś obsługują
@@ -36,7 +38,7 @@ public class CarService {
             throw new CarAlreadyExistException();
         }
 
-        if(isEmptyString(car)){
+        if (isEmptyString(car)) {
             throw new WrongFormatException();
         }
 

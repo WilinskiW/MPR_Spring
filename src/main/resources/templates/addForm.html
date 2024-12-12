@@ -6,10 +6,10 @@
 </head>
 <body>
     <form action="#" th:action="@{/addForm}" th:object="${car}" th:method="POST">
-        <input type="text" th:field="*{make}"/>
-        <input type="text" th:field="*{color}"/>
+        <input id="make" type="text" placeholder="make" th:field="*{make}"/>
+        <input id="color" type="text" placeholder="color" th:field="*{color}"/>
 
-        <input type="submit" value="Submit"/>
+        <input id="submit" type="submit" value="Submit"/>
 
     </form>
 </body>

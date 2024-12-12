@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete car</title>
+</head>
+<body>
+<form action="#" th:action="@{/deleteForm}" th:object="${inputCar}" th:method="POST">
+    <select id="select" th:field="*{id}">
+        <option th:each="car : ${cars}" th:value="${car.id}" th:text="${car.make + ' ' + car.color}"></option>
+    </select>
+
+    <input id="submit" type="submit" value="Submit"/>
+
+</form>
+</body>
+</html>
