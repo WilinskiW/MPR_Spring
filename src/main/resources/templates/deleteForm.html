@@ -6,7 +6,7 @@
 </head>
 <body>
 <form action="#" th:action="@{/deleteForm}" th:object="${inputCar}" th:method="POST">
-    <select id="select" th:field="*{id}">
+    <select id="options" th:field="*{id}">
         <option th:each="car : ${cars}" th:value="${car.id}" th:text="${car.make + ' ' + car.color}"></option>
     </select>
 
